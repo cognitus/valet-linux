@@ -7,6 +7,7 @@ use Valet\Contracts\PackageManager;
 use Valet\PackageManagers\Homebrew;
 use Valet\Contracts\ServiceManager;
 use Valet\PackageManagers\Dnf;
+use Valet\PackageManagers\Pacman;
 
 class PhpFpm
 {
@@ -379,7 +380,7 @@ class PhpFpm
 
         return $version;
     }
-    
+
     /**
      * Get the possible PHP FPM service names.
      *
@@ -387,6 +388,9 @@ class PhpFpm
      */
     public function getFpmServiceNames()
     {
+        if(is_null($this->version)) {
+            $this->version = $this->getPhpVersion();
+        }
         return [
             "php-fpm",
             "php-fpm{$this->version}",
@@ -417,7 +421,7 @@ class PhpFpm
 
         return new DomainException('Unable to determine PHP service name.');
     }
-    
+
     /**
      * Get FPM sock file name for a given PHP version.
      *
@@ -537,6 +541,10 @@ class PhpFpm
     public function getPhpVersion()
     {
         if ($this->pm instanceof Dnf) {
+            return null;
+        }
+
+        if ($this->pm instanceof Pacman) {
             return null;
         }
 
